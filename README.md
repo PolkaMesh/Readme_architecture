@@ -1008,11 +1008,13 @@ We mastered both **ink! v5** and **ink! v6**, discovering their subtle but impor
 **Key Learnings**:
 
 **Storage Optimization**:
+
 - ink! v6's `Lazy<T>` significantly reduces gas costs for rarely-accessed state
 - Mapping vs. StorageVec trade-offs: Mappings for random access, StorageVec for iteration
 - Each storage read costs ~5,000 gas; minimizing reads is critical
 
 **Cross-Contract Calls**:
+
 ```rust
 use ink::env::call::{build_call, ExecutionInput, Selector};
 
@@ -1035,6 +1037,7 @@ build_call::<Environment>()
 We built a production-grade SDK with **250+ type definitions** and learned TypeScript patterns for blockchain development.
 
 **Type Safety Everywhere**:
+
 ```typescript
 // Result type pattern (inspired by Rust)
 type Result<T, E> = { isOk: true; value: T } | { isOk: false; error: E };
@@ -1047,11 +1050,13 @@ async getJob(jobId: number): Promise<Result<Job, string>> {
 ```
 
 **Gas Estimation**:
+
 - Discovered `gasRequired` vs. `gasConsumed` (estimate vs. actual)
 - Built gas estimation utilities with 20% safety margin
 - WeightV2 introduces `refTime` (computational) and `proofSize` (storage) weights
 
 **Address Format Hell**:
+
 - H160 (EVM-style): `0x5a86a13ef7fc1c5e58f022be183de015dfb702ae`
 - SS58 (Substrate): `5HrKZAiTSAFcuxda89kSD77ZdygRUkufwRnGKgfGFR4NC2np`
 - Needed conversion utilities for both formats in the same SDK
@@ -1061,11 +1066,13 @@ async getJob(jobId: number): Promise<Result<Job, string>> {
 Integrating Phala's Phat Contracts taught us about confidential computing.
 
 **TEE Fundamentals**:
+
 - **Intel SGX/TDX**: Hardware-enforced isolated execution
 - **Attestation Proofs**: Cryptographic evidence that code ran in genuine TEE
 - **Off-chain Workers**: Listen for events, execute in TEE, submit results back
 
 **Architecture Pattern Discovered**:
+
 ```
 On-Chain (PhalaJobProcessor)          Off-Chain (Phat Contract)
         │                                      │
@@ -1089,6 +1096,7 @@ On-Chain (PhalaJobProcessor)          Off-Chain (Phat Contract)
 We explored XCM v5 for future cross-chain payments.
 
 **XCM Message Structure**:
+
 ```rust
 let message = Xcm(vec![
     WithdrawAsset((Here, amount).into()),
@@ -1101,6 +1109,7 @@ let message = Xcm(vec![
 ```
 
 **Challenges**:
+
 - Different parachains interpret XCM differently
 - Fee payment requires holding remote parachain tokens
 - Asset conversion and routing is complex
@@ -1112,6 +1121,7 @@ let message = Xcm(vec![
 We built an event-driven backend service to automate job processing.
 
 **Event Listening Pattern**:
+
 ```typescript
 async listenForJobs() {
   const api = await this.blockchainService.getApi();
@@ -1136,21 +1146,23 @@ async listenForJobs() {
 We implemented ECIES (Elliptic Curve Integrated Encryption Scheme) for confidential job data.
 
 **Encryption Flow**:
+
 ```typescript
 // Submitter encrypts job payload with provider's public key
 const encrypted = encrypt(
-  Buffer.from(provider.publicKey, 'hex'),
+  Buffer.from(provider.publicKey, "hex"),
   Buffer.from(JSON.stringify(jobPayload))
 );
 
 // Provider decrypts with their private key
 const decrypted = decrypt(
-  Buffer.from(privateKey, 'hex'),
-  Buffer.from(encrypted.ciphertext, 'hex')
+  Buffer.from(privateKey, "hex"),
+  Buffer.from(encrypted.ciphertext, "hex")
 );
 ```
 
 **Why ECIES?**
+
 - Combines symmetric + asymmetric encryption
 - Efficient for large payloads
 - Battle-tested (used in Bitcoin, Ethereum)
@@ -1160,12 +1172,13 @@ const decrypted = decrypt(
 Built Next.js 16 + React 19 frontend with Polkadot.js Extension integration.
 
 **Wallet Connection Pattern**:
-```typescript
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 
-const extensions = await web3Enable('PolkaMesh');
+```typescript
+import { web3Accounts, web3Enable } from "@polkadot/extension-dapp";
+
+const extensions = await web3Enable("PolkaMesh");
 if (extensions.length === 0) {
-  alert('No Polkadot wallet extension found!');
+  alert("No Polkadot wallet extension found!");
   return;
 }
 
@@ -1180,6 +1193,7 @@ const accounts = await web3Accounts();
 Containerized everything for reproducible builds.
 
 **Multi-Stage Docker**:
+
 ```dockerfile
 # Stage 1: Build SDK
 FROM node:18 AS sdk-builder
@@ -1202,6 +1216,7 @@ CMD ["node", "dist/index.js"]
 We adopted a pragmatic testing approach:
 
 **Contract Tests**: Rust unit tests with ink!'s test framework
+
 ```rust
 #[ink::test]
 fn test_submit_job() {
@@ -1221,6 +1236,7 @@ fn test_submit_job() {
 We learned: **Good documentation is as important as good code.**
 
 **Our Approach**:
+
 - Architecture diagrams with ASCII art (renders everywhere)
 - Code examples in README (tested, not hypothetical)
 - JSDoc for all public SDK functions
@@ -1239,12 +1255,15 @@ Building PolkaMesh took **4 weeks** of intensive development. Here's how we did 
 **Objective**: Understand the problem space and design a robust architecture.
 
 **Activities**:
+
 1. **Market Research**:
+
    - Studied centralized AI marketplaces (AWS SageMaker, Google Vertex AI)
    - Analyzed decentralized compute projects (Akash Network, Render Network)
    - Identified gaps: No privacy-first solution on Polkadot
 
 2. **Technology Evaluation**:
+
    - Chose ink! v6 for latest features (Lazy storage, better error handling)
    - Selected Phala Network for TEE integration
    - Decided on TypeScript SDK for developer accessibility
@@ -1256,11 +1275,13 @@ Building PolkaMesh took **4 weeks** of intensive development. Here's how we did 
    - Created database schema (on-chain storage mapping)
 
 **Key Decisions**:
+
 - ✅ **Modular Contracts**: Each contract has single responsibility
 - ✅ **Event-Driven**: Backend listens to contract events for automation
 - ✅ **Privacy-First**: Phala TEE for confidential compute
 
 **Deliverables**:
+
 - Architecture diagrams (ARCHITECTURE.md)
 - Contract specifications
 - API design document
@@ -1274,6 +1295,7 @@ Building PolkaMesh took **4 weeks** of intensive development. Here's how we did 
 **Week 2: Core Contracts (ink! v6)**
 
 **Day 1-2: AI Job Queue**
+
 ```rust
 // Implemented job submission with state machine
 pub struct Job {
@@ -1300,16 +1322,19 @@ pub fn submit_job(&mut self, ...) -> Result<u64, Error> {
 ```
 
 **Day 3-4: Payment Escrow**
+
 - Implemented escrow locking/releasing
 - Added refund logic for disputes
 - Built multi-token support (DOT + future XCM assets)
 
 **Day 5-6: Compute Provider Registry**
+
 - Provider registration with capabilities
 - Reputation scoring algorithm
 - Bidding system for job assignment
 
 **Day 7: Data NFT Registry**
+
 - NFT minting for IoT data
 - Access control with time-limited subscriptions
 - Privacy levels (Public/Private/Confidential)
@@ -1317,16 +1342,19 @@ pub fn submit_job(&mut self, ...) -> Result<u64, Error> {
 **Week 3: Advanced Contracts (ink! v5) + Testing**
 
 **Day 8-9: MEV Protection Contract**
+
 - Sandwich attack detection algorithms
 - Intent-based trading simulation
 - HydraDX/Polkadex integration hooks
 
 **Day 10-11: Phala Job Processor**
+
 - On-chain coordinator for Phat Contract
 - Attestation proof verification
 - Encrypted payload handling
 
 **Day 12-14: Testing & Deployment**
+
 ```bash
 # Build all contracts
 ./scripts/build-contracts.sh
@@ -1340,6 +1368,7 @@ cd PolkaMesh-Contracts/ai_job_queue && cargo test
 ```
 
 **Deployment Results**:
+
 - ✅ All 6 contracts deployed successfully
 - ✅ Total gas cost: ~481 mPAS (testnet tokens)
 - ✅ Contract addresses stored in `deployments/paseo.json`
@@ -1353,13 +1382,17 @@ cd PolkaMesh-Contracts/ai_job_queue && cargo test
 **SDK Development (Days 15-18)**
 
 **Contract Wrapper Pattern**:
+
 ```typescript
 export class AIJobQueue extends BaseContract {
   constructor(api: ApiPromise, address: string) {
     super(api, address, aiJobQueueAbi);
   }
 
-  async submitJob(params: SubmitJobParams, signer: KeyringPair): Promise<number> {
+  async submitJob(
+    params: SubmitJobParams,
+    signer: KeyringPair
+  ): Promise<number> {
     // Build transaction
     const tx = this.contract.tx.submitJob(
       { value: params.budget, gasLimit: this.estimateGas() },
@@ -1384,6 +1417,7 @@ export class AIJobQueue extends BaseContract {
 ```
 
 **Type System** (250+ definitions):
+
 - Job, Provider, DataNFT, Escrow types
 - Error types (18 custom classes)
 - Utility types for address validation, balance conversion
@@ -1391,6 +1425,7 @@ export class AIJobQueue extends BaseContract {
 **Backend Service** (Days 19-21):
 
 **NestJS Architecture**:
+
 ```
 src/
 ├── modules/
@@ -1402,6 +1437,7 @@ src/
 ```
 
 **Job Automation**:
+
 ```typescript
 @Injectable()
 export class JobExecutorService {
@@ -1435,12 +1471,14 @@ export class JobExecutorService {
 **Day 22-24: Core Components**
 
 **WalletConnect Component** (6,900 lines):
+
 - Polkadot.js Extension integration
 - Account selection UI
 - Balance display
 - Network status indicator
 
 **SubmitJobForm Component** (14,342 lines):
+
 - Form validation with TypeScript
 - Budget calculation (DOT → Planck conversion)
 - Compute type selection
@@ -1449,11 +1487,13 @@ export class JobExecutorService {
 **Day 25-26: Dashboard & Monitoring**
 
 **JobStatusMonitor** (11,321 lines):
+
 - Real-time job status polling
 - Transaction history
 - Provider assignments display
 
 **AttestationVerifier** (9,948 lines):
+
 - TEE proof visualization
 - Cryptographic verification UI
 
@@ -1478,6 +1518,7 @@ export class JobExecutorService {
 5. ✅ **Status Update**: Frontend displays completion
 
 **Test Results**:
+
 - Job submission: ✅ Working
 - Event listening: ✅ Working
 - Automated execution: ✅ Working
@@ -1497,12 +1538,14 @@ Building PolkaMesh wasn't without obstacles. Here are the major challenges and h
 We started with ink! v6 for all contracts, but Phala Network's tooling only supports ink! v5. This created a versioning conflict.
 
 **Error**:
+
 ```
 error: package `ink v5.0.0` cannot be built because it requires rustc 1.70 or newer
 error: package `ink v6.0.0` requires different dependency resolution
 ```
 
 **Root Cause**:
+
 - ink! v6 uses updated `scale-info` and `parity-scale-codec` versions
 - Phala Phat Contract SDK is pinned to ink! v5 dependencies
 - Cannot mix ink! versions in same workspace
@@ -1512,6 +1555,7 @@ error: package `ink v6.0.0` requires different dependency resolution
 We adopted a **dual-version strategy**:
 
 1. **Core contracts** (AI Job Queue, Payment Escrow, Provider Registry, Data NFT): **ink! v6**
+
    - Latest features (Lazy storage, improved error handling)
    - Better gas optimization
 
@@ -1520,6 +1564,7 @@ We adopted a **dual-version strategy**:
    - Deployed separately
 
 **Cargo.toml Configuration**:
+
 ```toml
 # ink! v6 contracts
 [dependencies]
@@ -1541,6 +1586,7 @@ ink = { version = "5.0.0", default-features = false }
 When `AIJobQueue` calls `PaymentEscrow.release_to_provider()`, how much gas should we allocate?
 
 **Initial Attempt** (Failed):
+
 ```rust
 build_call::<Environment>()
     .call(escrow_address)
@@ -1550,12 +1596,14 @@ build_call::<Environment>()
 ```
 
 **Error**:
+
 ```
 ContractTrapped: Contract execution trapped during call
 Reason: OutOfGas
 ```
 
 **Root Cause**:
+
 - Cross-contract calls inherit gas limit from parent call
 - Each contract call consumes gas for:
   - Function execution
@@ -1585,6 +1633,7 @@ fn estimate_cross_contract_gas() {
 ```
 
 **Final Implementation**:
+
 ```rust
 build_call::<Environment>()
     .call(escrow_address)
@@ -1604,6 +1653,7 @@ build_call::<Environment>()
 Our SDK needed to handle both EVM-style (H160) and Substrate-style (SS58) addresses, but conversions were inconsistent.
 
 **Example Confusion**:
+
 ```typescript
 // EVM address (ink! v6 on Pop Network)
 const evmAddress = "0x5a86a13ef7fc1c5e58f022be183de015dfb702ae";
@@ -1615,6 +1665,7 @@ const ss58Address = "5HrKZAiTSAFcuxda89kSD77ZdygRUkufwRnGKgfGFR4NC2np";
 ```
 
 **Failed Attempts**:
+
 1. ❌ `decodeAddress()` only works for SS58
 2. ❌ `isHex()` accepts any hex string, not just addresses
 3. ❌ Manual regex patterns fragile and error-prone
@@ -1624,8 +1675,8 @@ const ss58Address = "5HrKZAiTSAFcuxda89kSD77ZdygRUkufwRnGKgfGFR4NC2np";
 We built a **unified address validation utility**:
 
 ```typescript
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { isHex, hexToU8a } from '@polkadot/util';
+import { decodeAddress, encodeAddress } from "@polkadot/util-crypto";
+import { isHex, hexToU8a } from "@polkadot/util";
 
 export function isValidAddress(address: string): boolean {
   try {
@@ -1660,6 +1711,7 @@ export function normalizeAddress(address: string): Uint8Array {
 Our backend service's event listener was consuming increasing memory over time, eventually crashing after ~6 hours.
 
 **Symptoms**:
+
 ```
 FATAL ERROR: Ineffective mark-compacts near heap limit
 Allocation failed - JavaScript heap out of memory
@@ -1689,7 +1741,7 @@ export class BlockchainService implements OnModuleDestroy {
   private api: ApiPromise;
 
   async onModuleInit() {
-    const provider = new WsProvider(this.configService.get('RPC_URL'));
+    const provider = new WsProvider(this.configService.get("RPC_URL"));
     this.api = await ApiPromise.create({ provider });
   }
 
@@ -1699,12 +1751,13 @@ export class BlockchainService implements OnModuleDestroy {
   }
 
   getApi(): ApiPromise {
-    return this.api;  // Reuse single connection
+    return this.api; // Reuse single connection
   }
 }
 ```
 
 **Memory Usage**:
+
 - Before: 800MB → 2GB over 6 hours (crash)
 - After: Stable 150MB over 24+ hours
 
@@ -1735,6 +1788,7 @@ Route (pages)                              Size     First Load JS
 ```
 
 **Root Cause**:
+
 - Polkadot.js includes WASM cryptography libraries
 - No tree-shaking for WASM modules
 - All imported even if unused
@@ -1743,11 +1797,11 @@ Route (pages)                              Size     First Load JS
 
 ```typescript
 // Before: Imported at top level
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise, WsProvider } from "@polkadot/api";
 
 // After: Lazy load
 const loadPolkadotApi = async () => {
-  const { ApiPromise, WsProvider } = await import('@polkadot/api');
+  const { ApiPromise, WsProvider } = await import("@polkadot/api");
   return { ApiPromise, WsProvider };
 };
 ```
@@ -1759,11 +1813,11 @@ const loadPolkadotApi = async () => {
 module.exports = {
   webpack: (config) => {
     config.optimization.splitChunks = {
-      chunks: 'all',
+      chunks: "all",
       cacheGroups: {
         polkadot: {
           test: /[\\/]node_modules[\\/]@polkadot[\\/]/,
-          name: 'polkadot',
+          name: "polkadot",
           priority: 10,
         },
       },
@@ -1774,6 +1828,7 @@ module.exports = {
 ```
 
 **Results**:
+
 - Bundle size reduced: 12.8 MB → 4.2 MB (67% reduction)
 - First load improved: 528 KB → 280 KB
 - Time to Interactive: 8.2s → 3.1s
@@ -1787,6 +1842,7 @@ module.exports = {
 **Problem**:
 
 We needed testnet tokens (PAS) for deployment and testing, but the faucet had strict rate limits:
+
 - 1 request per hour per IP
 - Maximum 100 PAS per request
 - Deploying 6 contracts requires ~500 PAS
@@ -1811,17 +1867,20 @@ Matrix chat room `#paseo-faucet:parity.io` has generous community members who se
 **Problem**:
 
 Deploying to Phala Cloud requires understanding their specific tooling:
+
 - Phala Dashboard UI vs. CLI
 - WASM build targets
 - Cluster selection
 - Secrets management
 
 **Attempted**: Dashboard UI deployment
+
 - ✅ Easy interface
 - ❌ Limited customization
 - ❌ Can't script deployment
 
 **Decided**: CLI deployment with `npx phala`
+
 - ✅ Scriptable and repeatable
 - ✅ Better for CI/CD
 - ❌ More complex setup
@@ -1841,6 +1900,7 @@ After building PolkaMesh, here are our most important lessons:
 **Our Decision**: 6 independent contracts vs. 1 monolithic contract
 
 **Benefits Realized**:
+
 - ✅ Each contract ~600 lines (manageable)
 - ✅ Independent deployment and upgrades
 - ✅ Gas optimization per contract
@@ -1852,11 +1912,13 @@ After building PolkaMesh, here are our most important lessons:
 ### 2. Privacy Isn't Optional; It's Essential
 
 **Why Privacy Matters**:
+
 - Hospitals can't share medical data without TEE
 - Businesses won't reveal trade secrets on public chains
 - Users deserve financial privacy
 
 **Our Implementation**:
+
 - ✅ Phala TEE for confidential compute
 - ✅ ECIES encryption for job payloads
 - ✅ Data NFT privacy levels (Public/Private/Confidential)
@@ -1866,6 +1928,7 @@ After building PolkaMesh, here are our most important lessons:
 ### 3. Developer Experience = Adoption
 
 **What We Built**:
+
 - 📚 250+ TypeScript types (full IntelliSense)
 - 🔍 18 custom error classes (clear failure messages)
 - 📖 Comprehensive documentation (ARCHITECTURE.md, README, examples)
@@ -1876,6 +1939,7 @@ After building PolkaMesh, here are our most important lessons:
 ### 4. Test What Matters
 
 **Our Testing Philosophy**:
+
 - ✅ Unit tests for core business logic
 - ✅ Integration tests for critical paths (escrow release, attestation)
 - ❌ Don't test framework code (Polkadot.js, ink! runtime)
@@ -1885,6 +1949,7 @@ After building PolkaMesh, here are our most important lessons:
 ### 5. Blockchain Development Requires Multiple Skill Sets
 
 **Skills We Needed**:
+
 1. Rust (smart contracts)
 2. TypeScript (SDK, frontend)
 3. Cryptography (ECIES, attestation, TEE)
@@ -1897,6 +1962,7 @@ After building PolkaMesh, here are our most important lessons:
 ### 6. Community Support is Invaluable
 
 **How the Polkadot Community Helped**:
+
 - 💬 Discord support for ink! questions
 - 🪙 Paseo testnet tokens from generous community members
 - 📚 Documentation contributions and feedback
@@ -1907,6 +1973,7 @@ After building PolkaMesh, here are our most important lessons:
 ### 7. Documentation is a Force Multiplier
 
 **What We Documented**:
+
 - 📘 11 comprehensive guides (250KB total)
 - 🏗️ Architecture diagrams (ASCII art for universal rendering)
 - 💻 Code examples (tested, not hypothetical)
@@ -1930,11 +1997,13 @@ Polkadot's true power isn't replicating Ethereum's DeFi ecosystem it's enabling 
 ### 9. Iterate Fast, Deploy Often
 
 **Our Cadence**:
+
 - Week 1: Design + research
 - Week 2-3: Contracts + SDK (deploy to testnet every 2 days)
 - Week 4: Frontend + integration
 
 **Why This Worked**:
+
 - Early testnet deployment caught bugs sooner
 - Iterative feedback from community
 - Validated assumptions before building too much
@@ -1946,6 +2015,7 @@ Polkadot's true power isn't replicating Ethereum's DeFi ecosystem it's enabling 
 **PolkaMesh's Broader Mission**:
 
 We didn't just build a marketplace we demonstrated a new paradigm:
+
 - **Decentralized**: No AWS, no single point of failure
 - **Private**: TEE + encryption by default
 - **Collaborative**: Data owners, compute providers, and AI researchers cooperate trustlessly
@@ -2005,6 +2075,120 @@ All PolkaMesh contracts are currently deployed on **Paseo Pop Network**, a Polka
   }
 }
 ```
+
+---
+
+### 🔐 Phala Phat Contract Deployment (Off-Chain TEE)
+
+In addition to the on-chain contracts above, PolkaMesh includes a **Phala Phat Contract** for confidential off-chain computation in a Trusted Execution Environment (TEE).
+
+**Deployment Details**:
+
+- **Platform**: Phala Cloud (CVM)
+- **App ID**: `app_4c48fd1fdbcf7495e90758c6b4108faf1205c3a3`
+- **CVM ID**: `18501`
+- **Name**: `polkamesh-executor`
+- **Resources**: 1 vCPU, 2048 MB RAM, 40 GB Disk
+- **Dstack Version**: `dstack-0.3.6`
+- **Status**: ✅ Active
+- **Dashboard**: [View on Phala Cloud](https://cloud.phala.network/dashboard/cvms/app_4c48fd1fdbcf7495e90758c6b4108faf1205c3a3)
+
+**Capabilities**:
+- ✅ Confidential job execution in Intel SGX/TDX TEE
+- ✅ Attestation proof generation
+- ✅ On-chain result reporting to PhalaJobProcessor
+- ✅ Retry logic with exponential backoff
+- ✅ Statistics tracking (success rate, execution counts)
+
+#### Deployment Screenshots
+
+**Creating the Phat Contract:**
+
+![Phala Phat Contract Deployment](./image%20copy.png)
+
+*Figure 1: Deploying the Phat Contract to Phala Cloud using `npx phala cvms create`. The deployment successfully created CVM ID 18501 with the App ID `app_4c48fd1fdbcf7495e90758c6b4108faf1205c3a3`.*
+
+**Verifying Deployment Status:**
+
+![Phala Deployment Status](./image.png)
+
+*Figure 2: Checking deployment status with `npx phala cvms get`. The contract is running with 1 vCPU, 2048 MB memory, and using dstack-0.3.6 image.*
+
+#### Integration Configuration
+
+To integrate the Phat Contract with your application, add these environment variables:
+
+```bash
+# Phala Phat Contract
+PHALA_PHAT_CONTRACT_ID=app_4c48fd1fdbcf7495e90758c6b4108faf1205c3a3
+PHALA_WORKER_ENDPOINT=https://phala-worker-api.phala.network
+PHALA_CLUSTER_ID=poc6-testnet
+
+# On-Chain Contracts (for reference)
+PHALA_JOB_PROCESSOR=5HrKZAiTSAFcuxda89kSD77ZdygRUkufwRnGKgfGFR4NC2np
+MEV_PROTECTION=5DTPZHSHydkPQZbTFrhnHtZiDER7uoKSzdYHuCUXVAtjajXs
+```
+
+#### SDK Integration Example
+
+```typescript
+import { PolkaMesh } from '@polkamesh/sdk';
+
+const sdk = new PolkaMesh({
+  rpcUrl: 'wss://rpc1.paseo.popnetwork.xyz',
+  contractAddresses: {
+    aiJobQueue: '0xa44639cd0d0e6c6607491088c9c549e184456122',
+    phalaJobProcessor: '5HrKZAiTSAFcuxda89kSD77ZdygRUkufwRnGKgfGFR4NC2np',
+  },
+  phatConfig: {
+    contractId: 'app_4c48fd1fdbcf7495e90758c6b4108faf1205c3a3',
+    workerEndpoint: 'https://phala-worker-api.phala.network',
+    clusterId: 'poc6-testnet',
+  },
+});
+
+await sdk.initialize();
+
+// Submit job to be executed in TEE
+const jobId = await sdk.getAIJobQueue().submitJob({
+  description: 'Confidential AI inference',
+  budget: '100000000000',
+  dataSetId: '1',
+  computeType: 'GPU',
+  estimatedRuntime: 60,
+});
+
+console.log('✅ Job submitted to Phala TEE:', jobId);
+```
+
+#### Architecture: On-Chain + Off-Chain Integration
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              ON-CHAIN CONTRACTS (Paseo)                     │
+│  ├─ AIJobQueue (0xa446...)                                 │
+│  ├─ PhalaJobProcessor (5HrKZ...) ← Coordinator             │
+│  └─ PaymentEscrow (0x5a86...)                              │
+└───────────────────────┬─────────────────────────────────────┘
+                        │
+                        │ JobSubmitted Event
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│      PHAT CONTRACT (Phala Cloud TEE) ✅ DEPLOYED             │
+│  App ID: app_4c48fd1fdbcf7495e90758c6b4108faf1205c3a3     │
+│  ├─ Execute confidential computation                       │
+│  ├─ Generate attestation proof (SGX/TDX)                   │
+│  └─ Submit results back on-chain                           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Why Phala TEE?**
+- 🔒 **Privacy**: Encrypted computation, no data leakage
+- ✅ **Verifiable**: Cryptographic attestation proofs
+- ⚡ **Performance**: Native execution speed in secure enclave
+- 🌐 **Decentralized**: Runs on Phala's distributed TEE network
+
+---
 
 ### Verify Deployment on Polkadot.js Apps
 
